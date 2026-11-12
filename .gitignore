@@ -1,7 +1,14 @@
+# OS
 .DS_Store
+
+# Python
 __pycache__/
 *.pyc
+
+# Secrets
 .env
+
+# Runtime data (model caches and vector index)
 tei_data/
 tgi_data/
 index_storage/

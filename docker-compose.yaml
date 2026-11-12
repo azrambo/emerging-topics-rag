@@ -1,28 +1,36 @@
-version: "3.8"
-
 services:
+  # Text Embeddings Inference: serves the Jina embedding model
   tei:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.6
     platform: linux/amd64
-    # Model can be overridden using the TEI_MODEL environment variable
     command: --model-id ${TEI_MODEL:-jinaai/jina-embeddings-v2-base-es}
     ports:
       - "8080:80"
     volumes:
       - ./tei_data:/data
 
+  # Text Generation Inference: serves the Qwen chat model
   tgi:
     image: ghcr.io/huggingface/text-generation-inference:3.1.0
     platform: linux/amd64
-    # Model can be overridden using the TGI_MODEL environment variable
-    command: --model-id ${TGI_MODEL:-Qwen/Qwen2.5-0.5B-Instruct} --num-shard 1 --disable-custom-kernels --max-batch-total-tokens 4096 --max-batch-prefill-tokens 2048 --max-batch-size 4
+    command: >
+      --model-id ${TGI_MODEL:-Qwen/Qwen2.5-0.5B-Instruct}
+      --num-shard 1
+      --disable-custom-kernels
+      --max-batch-total-tokens 4096
+      --max-batch-prefill-tokens 2048
+      --max-batch-size 4
     ports:
       - "8081:80"
     volumes:
       - ./tgi_data:/data
 
+  # RAG API: FastAPI + LlamaIndex
   rag:
     build: .
+    environment:
+      TEI_MODEL: ${TEI_MODEL:-jinaai/jina-embeddings-v2-base-es}
+      TGI_MODEL: ${TGI_MODEL:-Qwen/Qwen2.5-0.5B-Instruct}
     ports:
       - "8000:8000"
     depends_on:
