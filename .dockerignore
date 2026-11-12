@@ -1,0 +1,23 @@
+# Keep the build context small: model caches and runtime data are mounted as volumes
+tei_data/
+tgi_data/
+index_storage/
+data/
+
+# Git and editor/OS files
+.git
+.gitignore
+.claude/
+.DS_Store
+
+# Python artefacts
+__pycache__/
+*.pyc
+.env
+
+# Not needed inside the image
+README.md
+test_rag.py
+docker-compose.yaml
+Dockerfile
+.dockerignore
